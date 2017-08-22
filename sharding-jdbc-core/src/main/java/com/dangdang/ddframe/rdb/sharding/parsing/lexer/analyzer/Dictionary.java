@@ -30,13 +30,21 @@ import java.util.Map;
  * @author zhangliang
  */
 public final class Dictionary {
-    
+
+    /**
+     * 词法关键词的Map
+     */
     private final Map<String, Keyword> tokens = new HashMap<>(1024);
     
     public Dictionary(final Keyword... dialectKeywords) {
         fill(dialectKeywords);
     }
-    
+
+    /**
+     * 添加默认词法关键词+方言词法关键词
+     * 不同的数据库有相同的默认词法关键词，有不同的方言关键词
+     * @param dialectKeywords
+     */
     private void fill(final Keyword... dialectKeywords) {
         for (DefaultKeyword each : DefaultKeyword.values()) {
             tokens.put(each.name(), each);
