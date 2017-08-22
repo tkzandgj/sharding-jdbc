@@ -101,18 +101,18 @@ public final class Main {
     private static DataSource createDataSource(final String dataSourceName) {
         BasicDataSource result = new BasicDataSource();
         result.setDriverClassName(com.mysql.jdbc.Driver.class.getName());
-        result.setUrl(String.format("jdbc:mysql://localhost:3306/%s", dataSourceName));
+        result.setUrl(String.format("jdbc:mysql://127.0.0.1:3306/%s", dataSourceName));
         result.setUsername("root");
-        result.setPassword("");
+        result.setPassword("root");
         return result;
     }
     
     private static DataSource createTransactionLogDataSource() {
         BasicDataSource result = new BasicDataSource();
         result.setDriverClassName(com.mysql.jdbc.Driver.class.getName());
-        result.setUrl("jdbc:mysql://localhost:3306/trans_log");
+        result.setUrl("jdbc:mysql://127.0.0.1:3306/trans_log");
         result.setUsername("root");
-        result.setPassword("");
+        result.setPassword("root");
         return result;
     }
     
