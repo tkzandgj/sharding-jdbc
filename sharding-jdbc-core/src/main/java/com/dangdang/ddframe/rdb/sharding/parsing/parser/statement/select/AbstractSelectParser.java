@@ -95,7 +95,10 @@ public abstract class AbstractSelectParser implements SQLStatementParser {
         parseGroupBy();
         queryRest();
     }
-    
+
+    /**
+     * 解析 DISTINCT、DISTINCTROW、UNION 谓语
+     */
     protected final void parseDistinct() {
         if (sqlParser.equalAny(DefaultKeyword.DISTINCT, DefaultKeyword.DISTINCTROW, DefaultKeyword.UNION)) {
             selectStatement.setDistinct(true);
@@ -115,22 +118,31 @@ public abstract class AbstractSelectParser implements SQLStatementParser {
     
     protected final void parseSelectList() {
         do {
+            // 解析单个选择项
             parseSelectItem();
         } while (sqlParser.skipIfEqual(Symbol.COMMA));
+
+        // 设置 最后一个查询项下一个 Token 的开始位置
         selectStatement.setSelectListLastPosition(sqlParser.getLexer().getCurrentToken().getEndPosition() - sqlParser.getLexer().getCurrentToken().getLiterals().length());
     }
     
     private void parseSelectItem() {
+        // 第四种情况，SQL Server 独有
         if (isRowNumberSelectItem()) {
             selectStatement.getItems().add(parseRowNumberSelectItem());
             return;
         }
+        // Oracle 独有：https://docs.oracle.com/cd/B19306_01/server.102/b14200/operators004.htm
         sqlParser.skipIfEqual(DefaultKeyword.CONNECT_BY_ROOT);
+
         String literals = sqlParser.getLexer().getCurrentToken().getLiterals();
+        // 第一种情况，* 通用选择项，SELECT *
         if (isStarSelectItem(literals)) {
             selectStatement.getItems().add(parseStarSelectItem());
             return;
         }
+
+
         if (isAggregationSelectItem()) {
             selectStatement.getItems().add(parseAggregationSelectItem(literals));
             return;
