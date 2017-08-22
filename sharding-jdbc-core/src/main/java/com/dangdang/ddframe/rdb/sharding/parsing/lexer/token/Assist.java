@@ -23,6 +23,13 @@ package com.dangdang.ddframe.rdb.sharding.parsing.lexer.token;
  * @author zhangliang
  */
 public enum Assist implements TokenType {
-    
-    END, ERROR
+
+    /**
+     * 分析结束
+     */
+    END,
+    /**
+     * 分析错误
+     */
+    ERROR
 }
