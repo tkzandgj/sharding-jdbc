@@ -54,11 +54,14 @@ public final class SQLParsingEngine {
      * @return SQL语句对象
      */
     public SQLStatement parse() {
+        //获取SQL解析器
         SQLParser sqlParser = getSQLParser();
+        //跳过 ";"
         sqlParser.skipIfEqual(Symbol.SEMI);
-        if (sqlParser.equalAny(DefaultKeyword.WITH)) {
+        if (sqlParser.equalAny(DefaultKeyword.WITH)) { //WITH Syntax
             skipWith(sqlParser);
         }
+        //获取对应SQL语句解析器，解析SQL
         if (sqlParser.equalAny(DefaultKeyword.SELECT)) {
             return SelectParserFactory.newInstance(sqlParser).parse();
         }
