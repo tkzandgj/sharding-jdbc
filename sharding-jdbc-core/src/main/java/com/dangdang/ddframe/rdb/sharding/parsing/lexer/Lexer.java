@@ -32,14 +32,27 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class Lexer {
-    
+
+    /**
+     * 输出字符串
+     * 比如SQL
+     */
     @Getter
     private final String input;
-    
+
+    /**
+     * 词法标记字典
+     */
     private final Dictionary dictionary;
-    
+
+    /**
+     * 解析到SQL的offset
+     */
     private int offset;
-    
+
+    /**
+     * 当前词法标记
+     */
     @Getter
     private Token currentToken;
     
@@ -48,7 +61,7 @@ public class Lexer {
      */
     public final void nextToken() {
         skipIgnoredToken();
-        if (isVariableBegin()) {
+        if (isVariableBegin()) { //变量
             currentToken = new Tokenizer(input, dictionary, offset).scanVariable();
         } else if (isNCharBegin()) {
             currentToken = new Tokenizer(input, dictionary, ++offset).scanChars();
@@ -69,13 +82,22 @@ public class Lexer {
         }
         offset = currentToken.getEndPosition();
     }
-    
+
+    /**
+     * 跳过忽略的词法标记
+     * 1、空格
+     * 2、SQL Hint
+     * 3、SQL 注解
+     */
     private void skipIgnoredToken() {
+        //空格
         offset = new Tokenizer(input, dictionary, offset).skipWhitespace();
+        //SQL Hint
         while (isHintBegin()) {
             offset = new Tokenizer(input, dictionary, offset).skipHint();
             offset = new Tokenizer(input, dictionary, offset).skipWhitespace();
         }
+        //SQL 注解
         while (isCommentBegin()) {
             offset = new Tokenizer(input, dictionary, offset).skipComment();
             offset = new Tokenizer(input, dictionary, offset).skipWhitespace();
