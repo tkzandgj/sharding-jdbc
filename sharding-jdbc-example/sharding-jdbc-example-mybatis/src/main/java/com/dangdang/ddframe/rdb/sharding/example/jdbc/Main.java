@@ -31,16 +31,16 @@ public class Main {
         // CHECKSTYLE:ON
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("META-INF/mybatis/mysql/mybatisContext.xml");
         OrderService orderService = applicationContext.getBean(OrderService.class);
-        orderService.clear();
+        //orderService.clear();
         orderService.fooService();
-        orderService.select();
+        //orderService.select();
         //[order_id: , user_id: 10, status: UPDATED, order_id: , user_id: 11, status: UPDATED]
-        orderService.clear();
-        try {
+        //orderService.clear();
+        /*try {
             orderService.fooServiceWithFailure();
         } catch (final IllegalArgumentException e) {
             System.out.println("roll back");
-        }
+        }*/
         //[]
         orderService.select();
     }
