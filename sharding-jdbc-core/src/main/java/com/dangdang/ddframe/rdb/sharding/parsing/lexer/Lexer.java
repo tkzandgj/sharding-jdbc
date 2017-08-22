@@ -113,7 +113,14 @@ public class Lexer {
         char next = getCurrentChar(1);
         return '/' == current && '/' == next || '-' == current && '-' == next || '/' == current && '*' == next;
     }
-    
+
+    /**
+     * 是否是 变量
+     * MySQL 与 SQL Server 支持
+     *
+     * @see Tokenizer#scanVariable()
+     * @return 是否
+     */
     protected boolean isVariableBegin() {
         return false;
     }
@@ -121,7 +128,14 @@ public class Lexer {
     protected boolean isSupportNChars() {
         return false;
     }
-    
+
+    /**
+     * 是否 N\
+     * 目前 SQLServer 独有：在 SQL Server 中處理 Unicode 字串常數時，必需為所有的 Unicode 字串加上前置詞 N
+     *
+     * @see Tokenizer#scanChars()
+     * @return 是否
+     */
     private boolean isNCharBegin() {
         return isSupportNChars() && 'N' == getCurrentChar(0) && '\'' == getCurrentChar(1);
     }
@@ -137,12 +151,26 @@ public class Lexer {
     private boolean isHexDecimalBegin() {
         return '0' == getCurrentChar(0) && 'x' == getCurrentChar(1);
     }
-    
+
+    /**
+     * 是否是 数字
+     * '-' 需要特殊处理。".2" 被处理成省略0的小数，"-.2" 不能被处理成省略的小数，否则会出问题。
+     * 例如说，"SELECT a-.2" 处理的结果是 "SELECT" / "a" / "-" / ".2"
+     *
+     * @return 是否
+     */
     private boolean isNumberBegin() {
-        return CharType.isDigital(getCurrentChar(0)) || ('.' == getCurrentChar(0) && CharType.isDigital(getCurrentChar(1)) && !isIdentifierBegin(getCurrentChar(-1))
+        return CharType.isDigital(getCurrentChar(0)) // 数字
+                || ('.' == getCurrentChar(0) && CharType.isDigital(getCurrentChar(1)) && !isIdentifierBegin(getCurrentChar(-1))
                 || ('-' == getCurrentChar(0) && ('.' == getCurrentChar(0) || CharType.isDigital(getCurrentChar(1)))));
     }
-    
+
+    /**
+     * 是否是 符号
+     *
+     * @see Tokenizer#scanSymbol()
+     * @return 是否
+     */
     private boolean isSymbolBegin() {
         return CharType.isSymbol(getCurrentChar(0));
     }
